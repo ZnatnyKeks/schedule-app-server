@@ -31,7 +31,7 @@ public class SubjectService {
             dto.setTeacherIds(getTeacherIds(subject.getTeachers()));
         }
         if (!subject.getClasses().isEmpty()) {
-            dto.setTeacherIds(getClassIds(subject.getClasses()));
+            dto.setTeacherIds(classService.getClassIds(subject.getClasses()));
         }
         return dto;
     }
@@ -56,9 +56,6 @@ public class SubjectService {
         return subject;
     }
 
-    private List<String> getClassIds(List<SchoolClass> classes) {
-        return classes.stream().map(SchoolClass::getId).toList();
-    }
 
     private List<String> getTeacherIds(List<User> teachers) {
         return teachers.stream().map(User::getId).toList();
@@ -94,5 +91,9 @@ public class SubjectService {
         subject.setTeachers(userService.getTeachers(teacherIds));
         subject.setClasses(classService.getClasses(classesIds));
         return convertToDto(repository.save(subject));
+    }
+
+    public List<String> getSubjectIds(List<SchoolClass> classes) {
+        return classes.stream().map(SchoolClass::getId).toList();
     }
 }

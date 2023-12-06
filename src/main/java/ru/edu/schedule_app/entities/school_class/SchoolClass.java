@@ -1,13 +1,13 @@
 package ru.edu.schedule_app.entities.school_class;
 
-import ru.edu.schedule_app.entities.group.Group;
-import ru.edu.schedule_app.entities.subject.Subject;
-import ru.edu.schedule_app.entities.user.User;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import ru.edu.schedule_app.entities.group.Group;
+import ru.edu.schedule_app.entities.subject.Subject;
+import ru.edu.schedule_app.entities.user.User;
 
 import java.time.LocalTime;
 import java.util.List;
@@ -28,10 +28,10 @@ public class SchoolClass {
 
     private LocalTime time;
 
-    @OneToMany
+    @ManyToOne
     private Subject subject;
 
-    @OneToMany
+    @ManyToOne
     private User teacher;
 
     @ManyToMany

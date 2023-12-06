@@ -32,13 +32,13 @@ public class User implements UserDetails {
 
     private String name;
 
-    @OneToMany
+    @ManyToOne
     private Group group;
 
-    @ManyToOne
+    @OneToMany
     private List<SchoolClass> classesToTeach;
 
-    @ManyToOne
+    @OneToMany
     private List<Subject> subjectsToTeach;
 
     @Enumerated(EnumType.STRING)

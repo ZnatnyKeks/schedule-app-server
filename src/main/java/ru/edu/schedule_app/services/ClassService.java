@@ -22,4 +22,8 @@ public class ClassService {
     public List<SchoolClass> getClasses(List<String> classesIds) {
         return classesIds.stream().map(this::getClassById).toList();
     }
+
+    public List<String> getClassIds(List<SchoolClass> classes) {
+        return classes.stream().map(SchoolClass::getId).toList();
+    }
 }

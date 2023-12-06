@@ -8,6 +8,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import ru.edu.schedule_app.entities.auth.RegisterRequest;
 import ru.edu.schedule_app.entities.user.User;
+import ru.edu.schedule_app.entities.user.UserDto;
 import ru.edu.schedule_app.entities.user.UserRole;
 import ru.edu.schedule_app.repositories.UserRepository;
 
@@ -20,6 +21,8 @@ public class UserService {
 
     private final UserRepository repository;
     private final PasswordEncoder encoder;
+    private final ClassService classService;
+    private final SubjectService subjectService;
 
     public User getUser(String email) {
         return repository.getByEmail(email)
@@ -79,5 +82,18 @@ public class UserService {
 
     public List<User> getStudents(List<String> studentIds) {
         return studentIds.stream().map(this::getStudentById).toList();
+    }
+
+    public UserDto convertToDto(User user) {
+        return new UserDto(
+                user.getId(),
+                user.getEmail(),
+                user.getPassword(),
+                user.getName(),
+                user.getGroup().getId(),
+                user.getRole().toString(),
+                classService.getClassIds(user.getClassesToTeach()),
+                subjectService.getSubjectIds(user.getClassesToTeach())
+        );
     }
 }

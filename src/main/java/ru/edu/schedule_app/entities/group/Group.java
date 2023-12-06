@@ -23,9 +23,9 @@ public class Group {
 
     private int number;
 
-    @ManyToOne
+    @OneToMany
     private List<User> students;
 
-    @ManyToMany
+    @OneToMany
     private List<SchoolClass> classes;
 }

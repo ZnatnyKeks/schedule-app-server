@@ -1,11 +1,6 @@
 package ru.edu.schedule_app.services;
 
 
-import ru.edu.schedule_app.entities.auth.AuthenticationRequest;
-import ru.edu.schedule_app.entities.auth.AuthenticationResponse;
-import ru.edu.schedule_app.entities.auth.RegisterRequest;
-import ru.edu.schedule_app.entities.user.User;
-import ru.edu.schedule_app.entities.user.UserDto;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -13,6 +8,10 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.stereotype.Service;
+import ru.edu.schedule_app.entities.auth.AuthenticationRequest;
+import ru.edu.schedule_app.entities.auth.AuthenticationResponse;
+import ru.edu.schedule_app.entities.auth.RegisterRequest;
+import ru.edu.schedule_app.entities.user.User;
 
 @Service
 @RequiredArgsConstructor
@@ -73,7 +72,7 @@ public class AuthenticationService {
         return AuthenticationResponse.builder()
                 .refreshToken(refreshToken)
                 .accessToken(accessToken)
-                .user(new UserDto(user))
+                .user(userService.convertToDto(user))
                 .build();
     }
 

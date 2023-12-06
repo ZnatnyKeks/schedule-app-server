@@ -1,12 +1,12 @@
 package ru.edu.schedule_app.entities.subject;
 
-import ru.edu.schedule_app.entities.school_class.SchoolClass;
-import ru.edu.schedule_app.entities.user.User;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import ru.edu.schedule_app.entities.school_class.SchoolClass;
+import ru.edu.schedule_app.entities.user.User;
 
 import java.util.List;
 
@@ -23,9 +23,9 @@ public class Subject {
 
     private String name;
 
-    @ManyToOne
+    @OneToMany
     private List<User> teachers;
 
-    @ManyToOne
+    @OneToMany
     private List<SchoolClass> classes;
 }
