@@ -8,11 +8,11 @@
 		<version>3.2.0</version>
 		<relativePath/>
 	</parent>
-	<groupId>com.ru</groupId>
-	<artifactId>template</artifactId>
+	<groupId>com.ru.dating-app</groupId>
+	<artifactId>dating-app</artifactId>
 	<version>0.0.1</version>
-	<name>template</name>
-	<description>Template Spring Boot Postgres</description>
+	<name>Dating app</name>
+	<description>Dating app where you can find your soul</description>
 	<properties>
 		<java.version>21</java.version>
 	</properties>
