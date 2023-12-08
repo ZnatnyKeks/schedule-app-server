@@ -18,6 +18,7 @@ import java.security.Key;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.function.Function;
 
 @Service
@@ -100,8 +101,9 @@ public class TokenService {
 
     public void setTokenToRepository(String refreshToken, User user) {
         try {
-            Token token = getByUser(user);
-            if (token != null) {
+            Optional<Token> optToken = repository.getByUser(user);
+            if (optToken.isPresent()) {
+                Token token = optToken.get();
                 token.setRefreshToken(refreshToken);
                 repository.save(token);
             } else {

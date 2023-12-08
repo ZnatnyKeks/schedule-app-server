@@ -1,7 +1,7 @@
 package com.ru.dating.config;
 
 import com.ru.dating.repositories.UserRepository;
-import com.ru.dating.services.UserService;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -18,11 +18,11 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 public class ApplicationConfiguration {
 
     private final UserRepository repository;
-    private final UserService userService;
 
     @Bean
     public UserDetailsService userDetailsService() {
-        return userService::getUser;
+        return username -> repository.getByEmail(username)
+                .orElseThrow(() -> new EntityNotFoundException("User with email " + username + "not found"));
     }
 
     @Bean

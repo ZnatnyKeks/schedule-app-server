@@ -5,6 +5,7 @@ import com.ru.dating.entities.auth.AuthenticationRequest;
 import com.ru.dating.entities.auth.AuthenticationResponse;
 import com.ru.dating.entities.auth.RegisterRequest;
 import com.ru.dating.entities.user.User;
+import com.ru.dating.entities.user.UserDto;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -72,7 +73,7 @@ public class AuthenticationService {
         return AuthenticationResponse.builder()
                 .refreshToken(refreshToken)
                 .accessToken(accessToken)
-                .user(user)
+                .user(new UserDto(user))
                 .build();
     }
 
