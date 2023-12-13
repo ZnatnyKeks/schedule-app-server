@@ -1,4 +1,4 @@
-# Dating web-app API
+# Schedule app [Server]
 
 ### Dependencies:
 
