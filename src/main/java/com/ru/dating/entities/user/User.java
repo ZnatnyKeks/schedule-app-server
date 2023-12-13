@@ -1,5 +1,6 @@
 package com.ru.dating.entities.user;
 
+import com.ru.dating.entities.hobby.Hobby;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -28,7 +29,12 @@ public class User implements UserDetails {
     private String password;
 
     private String name;
+    private int age;
+    private String info;
     private String imageUrl;
+
+    @ManyToMany
+    private List<Hobby> hobbies;
 
     @Enumerated(EnumType.STRING)
     private UserRole role;

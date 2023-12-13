@@ -3,6 +3,7 @@ package com.ru.dating.services;
 
 import com.ru.dating.entities.auth.RegisterRequest;
 import com.ru.dating.entities.user.User;
+import com.ru.dating.entities.user.UserDto;
 import com.ru.dating.entities.user.UserRole;
 import com.ru.dating.repositories.UserRepository;
 import jakarta.persistence.EntityExistsException;
@@ -34,6 +35,8 @@ public class UserService {
         var user = User.builder()
                 .email(request.getEmail())
                 .password(encoder.encode(request.getPassword()))
+                .name(request.getName())
+                .age(request.getAge())
                 .role(role)
                 .build();
         return repository.save(user);
@@ -45,5 +48,9 @@ public class UserService {
             case "ADMIN" -> UserRole.ADMIN;
             default -> throw new EntityNotFoundException("Role " + role + " not found");
         };
+    }
+
+    public UserDto getNextPair(String userId) {
+        return null;
     }
 }
