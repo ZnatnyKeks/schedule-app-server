@@ -1,5 +1,6 @@
 package ru.edu.schedule_app.entities.school_class;
 
+import ru.edu.schedule_app.entities.group.Group;
 import ru.edu.schedule_app.entities.subject.Subject;
 import ru.edu.schedule_app.entities.user.User;
 import jakarta.persistence.*;
@@ -9,6 +10,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalTime;
+import java.util.List;
 
 @Entity
 @Data
@@ -31,4 +33,7 @@ public class SchoolClass {
 
     @OneToMany
     private User teacher;
+
+    @ManyToMany
+    private List<Group> groups;
 }

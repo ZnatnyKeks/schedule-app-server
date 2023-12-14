@@ -1,5 +1,6 @@
 package ru.edu.schedule_app.entities.subject;
 
+import ru.edu.schedule_app.entities.school_class.SchoolClass;
 import ru.edu.schedule_app.entities.user.User;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -24,4 +25,7 @@ public class Subject {
 
     @ManyToOne
     private List<User> teachers;
+
+    @ManyToOne
+    private List<SchoolClass> classes;
 }

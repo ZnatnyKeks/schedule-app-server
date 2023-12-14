@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import ru.edu.schedule_app.entities.school_class.SchoolClass;
 import ru.edu.schedule_app.entities.user.User;
 
 import java.util.List;
@@ -24,4 +25,7 @@ public class Group {
 
     @ManyToOne
     private List<User> students;
+
+    @ManyToMany
+    private List<SchoolClass> classes;
 }

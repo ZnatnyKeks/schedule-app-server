@@ -9,6 +9,8 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import ru.edu.schedule_app.entities.group.Group;
+import ru.edu.schedule_app.entities.school_class.SchoolClass;
+import ru.edu.schedule_app.entities.subject.Subject;
 
 import java.util.Collection;
 import java.util.List;
@@ -32,6 +34,12 @@ public class User implements UserDetails {
 
     @OneToMany
     private Group group;
+
+    @ManyToOne
+    private List<SchoolClass> classesToTeach;
+
+    @ManyToOne
+    private List<Subject> subjectsToTeach;
 
     @Enumerated(EnumType.STRING)
     private UserRole role;
