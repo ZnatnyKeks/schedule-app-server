@@ -15,8 +15,4 @@ import org.springframework.web.bind.annotation.RestController;
 public class UserController {
     UserService service;
 
-    @PostMapping("/next-pair")
-    public ResponseEntity<UserDto> getNextPair(@PathVariable String userId) {
-        return ResponseEntity.ok(service.getNextPair(userId));
-    }
 }

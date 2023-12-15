@@ -1,16 +1,15 @@
 package ru.edu.schedule_app.services;
 
 
-import ru.edu.schedule_app.entities.auth.RegisterRequest;
-import ru.edu.schedule_app.entities.user.User;
-import ru.edu.schedule_app.entities.user.UserDto;
-import ru.edu.schedule_app.entities.user.UserRole;
-import ru.edu.schedule_app.repositories.UserRepository;
 import jakarta.persistence.EntityExistsException;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import ru.edu.schedule_app.entities.auth.RegisterRequest;
+import ru.edu.schedule_app.entities.user.User;
+import ru.edu.schedule_app.entities.user.UserRole;
+import ru.edu.schedule_app.repositories.UserRepository;
 
 import java.util.Optional;
 
@@ -26,6 +25,20 @@ public class UserService {
                 .orElseThrow(() -> new EntityNotFoundException("User with email " + email + "not found"));
     }
 
+    public User getTeacherById(String id) {
+        User user = getUserById(id);
+        if (user.getRole() != null && user.getRole() == UserRole.TEACHER) {
+            return user;
+        } else {
+            throw new EntityNotFoundException("Teacher with id" + id + "was not found");
+        }
+    }
+
+    private User getUserById(String id) {
+        return repository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("User with id " + id + "was not found"));
+    }
+
     public User setUser(RegisterRequest request) {
         Optional<User> optUser = repository.getByEmail(request.getEmail());
         UserRole role = extractRole(request.getRole());
@@ -36,7 +49,6 @@ public class UserService {
                 .email(request.getEmail())
                 .password(encoder.encode(request.getPassword()))
                 .name(request.getName())
-                .age(request.getAge())
                 .role(role)
                 .build();
         return repository.save(user);
@@ -44,13 +56,10 @@ public class UserService {
 
     private UserRole extractRole(String role) {
         return switch (role) {
-            case "USER" -> UserRole.USER;
+            case "TEACHER" -> UserRole.TEACHER;
+            case "STUDENT" -> UserRole.STUDENT;
             case "ADMIN" -> UserRole.ADMIN;
             default -> throw new EntityNotFoundException("Role " + role + " not found");
         };
-    }
-
-    public UserDto getNextPair(String userId) {
-        return null;
     }
 }
