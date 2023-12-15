@@ -38,15 +38,18 @@ public class SubjectService {
 
     private Subject convertToEntity(SubjectDto dto) {
         Subject subject = new Subject(
-                dto.getId(),
+                null,
                 dto.getName(),
                 null,
                 null
         );
+        if (!dto.getId().isEmpty()) {
+            subject.setId(dto.getId());
+        }
         if (!dto.getTeacherIds().isEmpty()) {
             List<User> teachers = new ArrayList<>();
-            for (int i = 0; i < dto.getTeacherIds().size(); i++) {
-                teachers.add(userService.getTeacherById(dto.getClassIds().get(i)));
+            for (String id : dto.getTeacherIds()) {
+                teachers.add(userService.getTeacherById(id));
             }
             subject.setTeachers(teachers);
         }
@@ -79,13 +82,6 @@ public class SubjectService {
         return repository.findAll().stream().map(this::convertToDto).toList();
     }
 
-    private List<User> getTeachers(List<String> teacherIds) {
-        return teacherIds.stream().map(userService::getTeacherById).toList();
-    }
-
-    private List<SchoolClass> getClasses(List<String> classesIds) {
-        return classesIds.stream().map(classService::getClassesById).toList();
-    }
 
     public SubjectDto editSubject(SubjectDto editedSubject) {
         String name = editedSubject.getName();
@@ -95,8 +91,8 @@ public class SubjectService {
         if (name != null && !name.isEmpty()) {
             subject.setName(name);
         }
-        subject.setTeachers(getTeachers(teacherIds));
-        subject.setClasses(getClasses(classesIds));
+        subject.setTeachers(userService.getTeachers(teacherIds));
+        subject.setClasses(classService.getClasses(classesIds));
         return convertToDto(repository.save(subject));
     }
 }

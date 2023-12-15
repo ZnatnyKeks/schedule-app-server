@@ -11,6 +11,7 @@ import ru.edu.schedule_app.entities.user.User;
 import ru.edu.schedule_app.entities.user.UserRole;
 import ru.edu.schedule_app.repositories.UserRepository;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -61,5 +62,22 @@ public class UserService {
             case "ADMIN" -> UserRole.ADMIN;
             default -> throw new EntityNotFoundException("Role " + role + " not found");
         };
+    }
+
+    public User getStudentById(String id) {
+        User user = getUserById(id);
+        if (user.getRole() != null && user.getRole() == UserRole.STUDENT) {
+            return user;
+        } else {
+            throw new EntityNotFoundException("Student with id" + id + "was not found");
+        }
+    }
+
+    public List<User> getTeachers(List<String> teacherIds) {
+        return teacherIds.stream().map(this::getTeacherById).toList();
+    }
+
+    public List<User> getStudents(List<String> studentIds) {
+        return studentIds.stream().map(this::getStudentById).toList();
     }
 }
