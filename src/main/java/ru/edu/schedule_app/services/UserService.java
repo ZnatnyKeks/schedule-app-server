@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import ru.edu.schedule_app.entities.auth.RegisterRequest;
+import ru.edu.schedule_app.entities.school_class.SchoolClass;
 import ru.edu.schedule_app.entities.user.User;
 import ru.edu.schedule_app.entities.user.UserDto;
 import ru.edu.schedule_app.entities.user.UserRole;
@@ -22,7 +23,6 @@ public class UserService {
     private final UserRepository repository;
     private final PasswordEncoder encoder;
     private final ClassService classService;
-    private final SubjectService subjectService;
 
     public User getUser(String email) {
         return repository.getByEmail(email)
@@ -84,6 +84,9 @@ public class UserService {
         return studentIds.stream().map(this::getStudentById).toList();
     }
 
+    private List<String> getSubjectIds(List<SchoolClass> classes) {
+        return classes.stream().map(SchoolClass::getId).toList();
+    }
     public UserDto convertToDto(User user) {
         return new UserDto(
                 user.getId(),
@@ -93,7 +96,7 @@ public class UserService {
                 user.getGroup().getId(),
                 user.getRole().toString(),
                 classService.getClassIds(user.getClassesToTeach()),
-                subjectService.getSubjectIds(user.getClassesToTeach())
+                getSubjectIds(user.getClassesToTeach())
         );
     }
 }
