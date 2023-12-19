@@ -71,7 +71,7 @@ public class SubjectService{
 
     public Subject getById(String id) {
         return repository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Subject with id " + " was not found"));
+                .orElseThrow(() -> new EntityNotFoundException("Subject with id " + id + " was not found"));
     }
 
     public List<Subject> getByIds(List<String> ids) {
@@ -108,5 +108,4 @@ public class SubjectService{
     public List<String> getSubjectIds(List<SchoolClass> classes) {
         return classes.stream().map(SchoolClass::getId).toList();
     }
-
 }

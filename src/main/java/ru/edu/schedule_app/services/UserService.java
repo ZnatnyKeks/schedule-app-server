@@ -14,6 +14,7 @@ import ru.edu.schedule_app.entities.user.UserDto;
 import ru.edu.schedule_app.entities.user.UserRole;
 import ru.edu.schedule_app.repositories.UserRepository;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -120,12 +121,12 @@ public class UserService implements EntityService<User, UserDto> {
 
     @Override
     public List<User> getByIds(List<String> ids) {
-        return null;
+        return new ArrayList<>();
     }
 
     @Override
     public List<String> getIds(List<User> entities) {
-        return null;
+        return new ArrayList<>();
     }
 
     public List<String> getStudentIds(List<User> students) {

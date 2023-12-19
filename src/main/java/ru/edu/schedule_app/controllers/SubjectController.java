@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.edu.schedule_app.entities.school_class.SchoolClass;
+import ru.edu.schedule_app.entities.subject.Subject;
 import ru.edu.schedule_app.entities.subject.SubjectDto;
 import ru.edu.schedule_app.services.ClassService;
 import ru.edu.schedule_app.services.SubjectService;
@@ -31,6 +32,12 @@ public class SubjectController {
     @GetMapping("/all")
     public ResponseEntity<List<SubjectDto>> getAllSubjects() {
         return ResponseEntity.ok(subjectService.getAllSubjects());
+    }
+    @GetMapping("/one")
+    public ResponseEntity<SubjectDto> getOneSubject(@RequestParam String id) {
+        Subject subject = subjectService.getById(id);
+        List<String> classIds = classService.getIds(subject.getClasses());
+        return ResponseEntity.ok(subjectService.convertToDto(subject, classIds));
     }
 
     @PatchMapping("/edit")
