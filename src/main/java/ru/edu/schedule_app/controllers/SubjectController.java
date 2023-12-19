@@ -3,7 +3,9 @@ package ru.edu.schedule_app.controllers;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import ru.edu.schedule_app.entities.school_class.SchoolClass;
 import ru.edu.schedule_app.entities.subject.SubjectDto;
+import ru.edu.schedule_app.services.ClassService;
 import ru.edu.schedule_app.services.SubjectService;
 
 import java.util.List;
@@ -13,25 +15,27 @@ import java.util.List;
 @RequestMapping("/api/v1/subject")
 public class SubjectController {
 
-    private final SubjectService service;
+    private final SubjectService subjectService;
+    private final ClassService classService;
 
     @PostMapping("/create")
     public ResponseEntity<SubjectDto> createSubject(@RequestBody SubjectDto createdSubject) {
-        return ResponseEntity.ok(service.createSubject(createdSubject));
+        return ResponseEntity.ok(subjectService.createSubject(createdSubject));
     }
 
     @DeleteMapping("/delete")
     public void deleteSubject(@PathVariable String id) {
-        service.deleteSubject(id);
+        subjectService.deleteSubject(id);
     }
 
-    @GetMapping("/get-all")
+    @GetMapping("/all")
     public ResponseEntity<List<SubjectDto>> getAllSubjects() {
-        return ResponseEntity.ok(service.getAllSubjects());
+        return ResponseEntity.ok(subjectService.getAllSubjects());
     }
 
     @PatchMapping("/edit")
     public ResponseEntity<SubjectDto> editSubject(@RequestBody SubjectDto editedSubject) {
-        return ResponseEntity.ok(service.editSubject(editedSubject));
+        List<SchoolClass> classes = classService.getByIds(editedSubject.getClassIds());
+        return ResponseEntity.ok(subjectService.editSubject(editedSubject, classes));
     }
 }

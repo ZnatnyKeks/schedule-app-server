@@ -14,7 +14,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class GroupService {
+public class GroupService implements EntityService<Group, GroupDto>{
 
     private final GroupRepository repository;
     private final ClassService classService;
@@ -24,51 +24,60 @@ public class GroupService {
         return convertToDto(repository.save(convertToEntity(createdGroup)));
     }
 
-    private GroupDto convertToDto(Group group) {
+    public GroupDto convertToDto(Group group) {
         GroupDto dto = new GroupDto(
                 group.getId(),
                 group.getNumber(),
                 null,
                 null
         );
-        if (!group.getStudents().isEmpty()) {
-            dto.setStudentIds(getStudentIds(group.getStudents()));
+        if (group.getStudents() != null) {
+            dto.setStudentIds(userService.getStudentIds(group.getStudents()));
         }
-        if (!group.getClasses().isEmpty()) {
-            dto.setClassIds(getClassIds(group.getClasses()));
+        if (group.getClasses() != null) {
+            dto.setClassIds(classService.getIds(group.getClasses()));
         }
         return dto;
     }
 
-    private List<String> getClassIds(List<SchoolClass> classes) {
-        return classes.stream().map(SchoolClass::getId).toList();
+    @Override
+    public Group getById(String id) {
+        return null;
     }
 
-    private List<String> getStudentIds(List<User> students) {
-        return students.stream().map(User::getId).toList();
+    @Override
+    public List<Group> getByIds(List<String> ids) {
+        return null;
     }
 
-    private Group convertToEntity(GroupDto dto) {
+    @Override
+    public List<String> getIds(List<Group> groups) {
+        return groups.stream().map(Group::getId).toList();
+
+    }
+
+
+    public Group convertToEntity(GroupDto dto) {
         Group group = new Group(
                 null,
                 dto.getNumber(),
                 null,
                 null
         );
-        if (!dto.getId().isEmpty()) {
+        if (dto.getId() != null) {
             group.setId(dto.getId());
         }
-        if (!dto.getStudentIds().isEmpty()) {
+        if (dto.getStudentIds() != null) {
             List<User> students = new ArrayList<>();
             for (String id : dto.getStudentIds()) {
                 students.add(userService.getStudentById(id));
             }
             group.setStudents(students);
         }
-        if (!dto.getClassIds().isEmpty()) {
+        if (dto.getClassIds() != null) {
             List<SchoolClass> classes = new ArrayList<>();
             for (String id : dto.getClassIds()) {
-                classes.add(classService.getClassById(id));
+                classes.add(classService.getById(id));
             }
             group.setClasses(classes);
         }
@@ -91,7 +100,7 @@ public class GroupService {
         Group group = getGroupById(editedGroup.getId());
         group.setNumber(number);
         group.setStudents(userService.getStudents(studentIds));
-        group.setClasses(classService.getClasses(classIds));
+        group.setClasses(classService.getByIds(classIds));
         return convertToDto(repository.save(group));
     }
 }

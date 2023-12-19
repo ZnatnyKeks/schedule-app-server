@@ -8,6 +8,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import ru.edu.schedule_app.entities.auth.RegisterRequest;
 import ru.edu.schedule_app.entities.school_class.SchoolClass;
+import ru.edu.schedule_app.entities.subject.Subject;
 import ru.edu.schedule_app.entities.user.User;
 import ru.edu.schedule_app.entities.user.UserDto;
 import ru.edu.schedule_app.entities.user.UserRole;
@@ -18,11 +19,10 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
-public class UserService {
+public class UserService implements EntityService<User, UserDto> {
 
     private final UserRepository repository;
     private final PasswordEncoder encoder;
-    private final ClassService classService;
 
     public User getUser(String email) {
         return repository.getByEmail(email)
@@ -87,16 +87,69 @@ public class UserService {
     private List<String> getSubjectIds(List<SchoolClass> classes) {
         return classes.stream().map(SchoolClass::getId).toList();
     }
+
+    @Override
+    public User convertToEntity(UserDto dto) {
+        return null;
+    }
+
     public UserDto convertToDto(User user) {
-        return new UserDto(
+        UserDto dto = new UserDto(
                 user.getId(),
                 user.getEmail(),
                 user.getPassword(),
                 user.getName(),
-                user.getGroup().getId(),
                 user.getRole().toString(),
-                classService.getClassIds(user.getClassesToTeach()),
-                getSubjectIds(user.getClassesToTeach())
+                null,
+                null,
+                null
+
         );
+        if (user.getRole() == UserRole.TEACHER
+                && user.getClassesToTeach() != null
+                && user.getSubjectsToTeach() != null) {
+            dto.setClassToTeachIds(user.getClassesToTeach().stream().map(SchoolClass::getId).toList());
+            dto.setSubjectToTeachIds(user.getSubjectsToTeach().stream().map(Subject::getId).toList());
+        }
+        if (user.getRole() == UserRole.STUDENT
+                & user.getGroup() != null) {
+            dto.setGroupId(user.getGroup().getId());
+        }
+        return dto;
+    }
+
+    @Override
+    public User getById(String id) {
+        return null;
+    }
+
+    @Override
+    public List<User> getByIds(List<String> ids) {
+        return null;
+    }
+
+    @Override
+    public List<String> getIds(List<User> entities) {
+        return null;
+    }
+
+    public List<String> getStudentIds(List<User> students) {
+        return students.stream().map(this::getStudentId).toList();
+    }
+
+    private String getStudentId(User user) {
+        if (user.getRole() == UserRole.STUDENT) {
+            return user.getId();
+        } else {
+            throw new EntityNotFoundException("Student not found");
+        }
+    }
+
+    public List<UserDto> getAllTeachers() {
+        return repository.findAll().stream().filter(user -> user.getRole() == UserRole.TEACHER).map(this::convertToDto).toList();
+    }
+
+    public List<UserDto> getAllStudents() {
+        return repository.findAll().stream().filter(user -> user.getRole() == UserRole.STUDENT).map(this::convertToDto).toList();
     }
 }

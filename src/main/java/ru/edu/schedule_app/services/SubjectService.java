@@ -14,36 +14,35 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class SubjectService {
+public class SubjectService{
 
     private final SubjectRepository repository;
     private final UserService userService;
-    private final ClassService classService;
 
-    private SubjectDto convertToDto(Subject subject) {
+    public SubjectDto convertToDto(Subject subject,List<String> classIds ) {
         SubjectDto dto = new SubjectDto(
                 subject.getId(),
                 subject.getName(),
                 null,
                 null
         );
-        if (!subject.getTeachers().isEmpty()) {
+        if (subject.getTeachers() != null) {
             dto.setTeacherIds(getTeacherIds(subject.getTeachers()));
         }
-        if (!subject.getClasses().isEmpty()) {
-            dto.setTeacherIds(classService.getClassIds(subject.getClasses()));
+        if (subject.getClasses() != null) {
+            dto.setClassIds(classIds);
         }
         return dto;
     }
 
-    private Subject convertToEntity(SubjectDto dto) {
+    public Subject convertToEntity(SubjectDto dto) {
         Subject subject = new Subject(
                 null,
                 dto.getName(),
                 null,
                 null
         );
-        if (!dto.getId().isEmpty()) {
+        if (dto.getId() != null) {
             subject.setId(dto.getId());
         }
         if (!dto.getTeacherIds().isEmpty()) {
@@ -63,37 +62,51 @@ public class SubjectService {
 
     public SubjectDto createSubject(SubjectDto createdSubject) {
         Subject subject = repository.save(convertToEntity(createdSubject));
-        return convertToDto(subject);
+        return convertToDto(subject, createdSubject.getClassIds());
     }
 
     public void deleteSubject(String id) {
-        repository.delete(getSubjectById(id));
+        repository.delete(getById(id));
     }
 
-    private Subject getSubjectById(String id) {
+    public Subject getById(String id) {
         return repository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Subject with id " + " was not found"));
     }
 
+    public List<Subject> getByIds(List<String> ids) {
+        return ids.stream().map(this::getById).toList();
+    }
+
+    public List<String> getIds(List<Subject> entities) {
+        return entities.stream().map(Subject::getId).toList();
+    }
+
     public List<SubjectDto> getAllSubjects() {
-        return repository.findAll().stream().map(this::convertToDto).toList();
+        List<Subject> subjects =  repository.findAll();
+        List<SubjectDto> dtos = new ArrayList<>();
+        for (Subject subject : subjects) {
+            List<String> classIds = subject.getClasses().stream().map(SchoolClass::getId).toList();
+            dtos.add(convertToDto(subject, classIds));
+        }
+        return dtos;
     }
 
 
-    public SubjectDto editSubject(SubjectDto editedSubject) {
+    public SubjectDto editSubject(SubjectDto editedSubject, List<SchoolClass> classes) {
         String name = editedSubject.getName();
         List<String> teacherIds = editedSubject.getTeacherIds();
-        List<String> classesIds = editedSubject.getClassIds();
-        Subject subject = getSubjectById(editedSubject.getId());
+        Subject subject = getById(editedSubject.getId());
         if (name != null && !name.isEmpty()) {
             subject.setName(name);
         }
         subject.setTeachers(userService.getTeachers(teacherIds));
-        subject.setClasses(classService.getClasses(classesIds));
-        return convertToDto(repository.save(subject));
+        subject.setClasses(classes);
+        return convertToDto(repository.save(subject), editedSubject.getClassIds());
     }
 
     public List<String> getSubjectIds(List<SchoolClass> classes) {
         return classes.stream().map(SchoolClass::getId).toList();
     }
+
 }

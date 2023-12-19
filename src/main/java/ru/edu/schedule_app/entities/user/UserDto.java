@@ -18,8 +18,10 @@ public class UserDto {
     private String email;
     private String password;
     private String name;
-    private String groupId;
     private String role;
+
+    private String groupId;
+
     private List<String> classToTeachIds;
     private List<String> subjectToTeachIds;
 }

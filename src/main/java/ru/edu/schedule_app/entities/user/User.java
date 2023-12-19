@@ -32,6 +32,9 @@ public class User implements UserDetails {
 
     private String name;
 
+    @Enumerated(EnumType.STRING)
+    private UserRole role;
+
     @ManyToOne
     private Group group;
 
@@ -40,9 +43,6 @@ public class User implements UserDetails {
 
     @OneToMany
     private List<Subject> subjectsToTeach;
-
-    @Enumerated(EnumType.STRING)
-    private UserRole role;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
