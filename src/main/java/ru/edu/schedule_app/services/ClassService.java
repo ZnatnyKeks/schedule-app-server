@@ -9,6 +9,7 @@ import ru.edu.schedule_app.entities.group.Group;
 import ru.edu.schedule_app.entities.school_class.SchoolClass;
 import ru.edu.schedule_app.entities.school_class.SchoolClassDto;
 import ru.edu.schedule_app.entities.school_class.Weekday;
+import ru.edu.schedule_app.entities.user.User;
 import ru.edu.schedule_app.repositories.ClassRepository;
 
 import java.time.LocalTime;
@@ -16,7 +17,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class ClassService{
+public class ClassService {
 
     private final ClassRepository repository;
     @Autowired
@@ -33,7 +34,7 @@ public class ClassService{
                 userService.getTeacherById(dto.getTeacherId()),
                 groups
         );
-        if(!dto.getId().isEmpty()) {
+        if (dto.getId() != null) {
             schoolClass.setId(dto.getId());
         }
         return schoolClass;
@@ -65,10 +66,16 @@ public class ClassService{
         return classes.stream().map(SchoolClass::getId).toList();
     }
 
-    public List<SchoolClassDto> getAll(int limit) {
-        return repository.findAll().stream().map(this::convertToDto).toList().subList(0, limit);
+    public List<SchoolClassDto> getAll(User student) {
+        return repository.findAll().stream()
+                .filter(schoolClass -> schoolClass.getGroups().contains(student.getGroup())).map(this::convertToDto).toList();
     }
+
     public List<SchoolClassDto> getAll() {
         return repository.findAll().stream().map(this::convertToDto).toList();
+    }
+
+    public SchoolClassDto create(SchoolClassDto dto, List<Group> groups) {
+        return convertToDto(repository.save(convertToEntity(dto, groups)));
     }
 }

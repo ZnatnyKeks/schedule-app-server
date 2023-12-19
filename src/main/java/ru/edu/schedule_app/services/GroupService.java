@@ -42,12 +42,13 @@ public class GroupService implements EntityService<Group, GroupDto>{
 
     @Override
     public Group getById(String id) {
-        return null;
+        return repository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Class with id " + id + "not found"));
     }
 
     @Override
     public List<Group> getByIds(List<String> ids) {
-        return null;
+        return ids.stream().map(this::getById).toList();
     }
 
     @Override
@@ -102,5 +103,9 @@ public class GroupService implements EntityService<Group, GroupDto>{
         group.setStudents(userService.getStudents(studentIds));
         group.setClasses(classService.getByIds(classIds));
         return convertToDto(repository.save(group));
+    }
+
+    public List<GroupDto> getAll() {
+        return repository.findAll().stream().map(this::convertToDto).toList();
     }
 }

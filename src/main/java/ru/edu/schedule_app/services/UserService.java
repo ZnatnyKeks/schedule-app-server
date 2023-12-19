@@ -24,30 +24,34 @@ public class UserService implements EntityService<User, UserDto> {
     private final UserRepository repository;
     private final PasswordEncoder encoder;
 
+    private String notFoundMessage(String id) {
+        return "User with id " + id + "was not found";
+    }
     public User getUser(String email) {
         return repository.getByEmail(email)
-                .orElseThrow(() -> new EntityNotFoundException("User with email " + email + "not found"));
+                .orElseThrow(() -> new EntityNotFoundException(notFoundMessage(email)));
     }
 
     public User getTeacherById(String id) {
-        User user = getUserById(id);
+        User user = getById(id);
         if (user.getRole() != null && user.getRole() == UserRole.TEACHER) {
             return user;
         } else {
-            throw new EntityNotFoundException("Teacher with id" + id + "was not found");
+            throw new EntityNotFoundException(notFoundMessage(id));
         }
     }
 
-    private User getUserById(String id) {
+    @Override
+    public User getById(String id) {
         return repository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("User with id " + id + "was not found"));
+                .orElseThrow(() -> new EntityNotFoundException(notFoundMessage(id)));
     }
 
     public User setUser(RegisterRequest request) {
         Optional<User> optUser = repository.getByEmail(request.getEmail());
         UserRole role = extractRole(request.getRole());
         if (optUser.isPresent()) {
-            throw new EntityExistsException("User with email: " + request.getEmail() + " already exists");
+            throw new EntityExistsException(notFoundMessage(request.getEmail()));
         }
         var user = User.builder()
                 .email(request.getEmail())
@@ -68,11 +72,11 @@ public class UserService implements EntityService<User, UserDto> {
     }
 
     public User getStudentById(String id) {
-        User user = getUserById(id);
+        User user = getById(id);
         if (user.getRole() != null && user.getRole() == UserRole.STUDENT) {
             return user;
         } else {
-            throw new EntityNotFoundException("Student with id" + id + "was not found");
+            throw new EntityNotFoundException(notFoundMessage(id));
         }
     }
 
@@ -82,10 +86,6 @@ public class UserService implements EntityService<User, UserDto> {
 
     public List<User> getStudents(List<String> studentIds) {
         return studentIds.stream().map(this::getStudentById).toList();
-    }
-
-    private List<String> getSubjectIds(List<SchoolClass> classes) {
-        return classes.stream().map(SchoolClass::getId).toList();
     }
 
     @Override
@@ -112,15 +112,10 @@ public class UserService implements EntityService<User, UserDto> {
             dto.setSubjectToTeachIds(user.getSubjectsToTeach().stream().map(Subject::getId).toList());
         }
         if (user.getRole() == UserRole.STUDENT
-                & user.getGroup() != null) {
+                && user.getGroup() != null) {
             dto.setGroupId(user.getGroup().getId());
         }
         return dto;
-    }
-
-    @Override
-    public User getById(String id) {
-        return null;
     }
 
     @Override
@@ -141,7 +136,7 @@ public class UserService implements EntityService<User, UserDto> {
         if (user.getRole() == UserRole.STUDENT) {
             return user.getId();
         } else {
-            throw new EntityNotFoundException("Student not found");
+            throw new EntityNotFoundException(notFoundMessage(user.getId()));
         }
     }
 
